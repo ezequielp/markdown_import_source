@@ -17,7 +17,7 @@ Should work with any Python-Markdown-based static site generation, such as
 
     
 
-# Usage
+# Configuration
 
 Activate the `mdx_importsource` extension. For example, with Pelican, you add a
 configuration line to your configuration file (i.e. `pelicanconf.py`):
@@ -33,6 +33,19 @@ MARKDOWN = {
         },
         ...
     }
+```
+
+Also, in order for the `hide=all` and `hide=results` params to work you'll need to
+add the following css to your site:
+
+```css
+.hidden {
+    display: none;
+}
+
+.hidden-results .klipse-result {
+    display: none;
+}
 ```
 
 The `source_paths` option is needed if you plan to import source files and it needs to contain at least one absolute path to search for files.
