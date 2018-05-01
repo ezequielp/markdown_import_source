@@ -1,0 +1,4 @@
+.flake8
+.vscode
+Markdown_Import_source_Extension.egg-info
+__pycache__
