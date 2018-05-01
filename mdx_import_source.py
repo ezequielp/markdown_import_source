@@ -145,7 +145,7 @@ class ImportSource(Extension):
         super(ImportSource, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
-        md.preprocessors.add('sourcecode', ImportSourcePreprocessor(md, self.getConfigs()), '_begin')
+        md.preprocessors.add('mdx_source_code', ImportSourcePreprocessor(md, self.getConfigs()), '_begin')
 
 
 def makeExtension(*args, **kwargs):
