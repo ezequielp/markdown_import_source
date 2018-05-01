@@ -2,6 +2,7 @@ from .filesystem import Importer
 from .utils import resolve
 import re
 
+
 class SourceLineParser():
     def __init__(self, sourceline, source_paths):
         if source_paths:

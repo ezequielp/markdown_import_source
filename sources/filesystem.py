@@ -1,6 +1,3 @@
-import os
-
-
 class Importer():
     def __init__(self, filename, start, end):
         self.filename = filename

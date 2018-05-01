@@ -96,7 +96,6 @@ class ImportSourcePreprocessor(Preprocessor):
             return parser.readlines()
 
 
-
 class ImportSource(Extension):
     def __init__(self, *args, **kwargs):
         # Define config options and defaults
