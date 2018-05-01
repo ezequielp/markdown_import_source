@@ -1,7 +1,7 @@
 from markdown import Extension
 from markdown.preprocessors import Preprocessor
+from sources import SourceLineParser
 import re
-import os
 
 BLOCKS = {
     'start': re.compile(
@@ -33,7 +33,7 @@ def extract_attrs(line):
 
 class ImportSourcePreprocessor(Preprocessor):
     def __init__(self, md, config, *args, **kwargs):
-        self.source_directories = config['source_paths']
+        self.source_paths = config['source_paths']
         self.enable_live_code = config['enable_live_code']
         super(ImportSourcePreprocessor, self).__init__(*args, **kwargs)
 
@@ -99,38 +99,10 @@ class ImportSourcePreprocessor(Preprocessor):
         return "</code></pre>" if use_klipse else '```'
 
     def fetch_source(self, block_attrs):
-        if self.source_directories:
-            directories = self.source_directories
-        else:
-            directories = ['./']
-
         if 'source' in block_attrs:
-            file_name, lines = block_attrs['source'].split('#')
-            lines = re.match('L(\d+)\-L(\d+)', lines)
+            parser = SourceLineParser(block_attrs['source'], self.source_paths).get_reader()
+            return parser.readlines()
 
-            start, end = map(int, lines.groups()) if lines else (1, -1)
-
-            # Indices are 0 based on python and 1 based on IDEs and github.
-            # We leave end as it is because we want to include the end line
-            start = start-1
-
-            tries = []
-            for search_dir in directories:
-                try:
-                    full_name = os.sep.join([search_dir, file_name])
-                    tries.append(full_name)
-                    with open(full_name, 'r') as f:
-                        return f.readlines()[start:end]
-                except FileNotFoundError:
-                    pass
-
-                # Did not find the source file. Throw error
-                error = (
-                    "Could not find {} in supplied search paths. Tried: {}. "
-                    "Remember to configure all search paths in the source_paths "
-                    "configuration option."
-                ).format(file_name, ', '.join(tries))
-                raise FileNotFoundError(error)
 
 
 class ImportSource(Extension):
