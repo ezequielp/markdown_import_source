@@ -6,7 +6,7 @@ import re
 
 BLOCKS = {
     'start': re.compile(
-        r'```(?P<lang>[^=\s]+)\s(?P<attrs>.*)$'
+        r'```(?P<lang>[^=\s]+)(?P<attrs>.*)$'
     ),
     'end': re.compile(r'^```$')
 }
