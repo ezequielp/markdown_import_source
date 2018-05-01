@@ -1,6 +1,7 @@
 from markdown import Extension
 from markdown.preprocessors import Preprocessor
 from sources import SourceLineParser
+from includes import klipse_include
 import re
 
 BLOCKS = {
@@ -9,19 +10,6 @@ BLOCKS = {
     ),
     'end': re.compile(r'^```$')
 }
-KLIPSE_INCLUDE = """<!-- Klipse includes -->
-<link
-    rel="stylesheet"
-    type="text/css"
-    href="https://storage.googleapis.com/app.klipse.tech/css/codemirror.css">
-<script>
-    window.klipse_settings = {
-      selector: ".language-klipse, .lang-eval-clojure",
-      selector_eval_js: ".lang-eval-js"
-    };
-</script>
-<script src="https://storage.googleapis.com/app.klipse.tech/plugin/js/klipse_plugin.js">
-</script>""".split("\n")
 
 
 def extract_attrs(line):
@@ -51,8 +39,12 @@ class ImportSourcePreprocessor(Preprocessor):
     def run(self, lines):
         new_lines = lines[:]
         blocks = self.find_blocks(lines)
+        languages = set()
         for start, end in blocks[::-1]:
             block_attrs = extract_attrs(lines[start])
+            if 'lang' in block_attrs:
+                languages.add(block_attrs['lang'])
+
             new_lines[start] = self.build_start_block(block_attrs, self.enable_live_code)
 
             end_offset = 0
@@ -64,8 +56,8 @@ class ImportSourcePreprocessor(Preprocessor):
 
             new_lines[end + end_offset] = self.build_end_block(self.enable_live_code)
 
-        if blocks and self.enable_live_code:
-            new_lines.extend(KLIPSE_INCLUDE)
+        if languages and self.enable_live_code:
+            new_lines.extend(klipse_include(languages))
 
         return new_lines
 
