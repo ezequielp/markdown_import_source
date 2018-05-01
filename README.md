@@ -44,9 +44,9 @@ The `source_paths` option is needed if you plan to import source files and it ne
 This is just the default way a Markdown `code` block works. The syntax is the same and 
 the extension won't do anything:
 
-```clojure
+\`\`\`clojure
 (def my-value 10)
-```
+\`\`\`
 
 ## Using an external file with live code disabled
 
@@ -54,8 +54,8 @@ You can use the `source` parameter to select which file to import code from. The
 exist on any of the given `source_paths`. Additionally, you can use the `#LN-LM` to only include
 lines `N` through `M`. By default, the whole file will be included.
 
-```java source=price-decided.cljs#L1-L4
-```
+\`\`\`java source=price-decided.cljs#L1-L4
+\`\`\`
 
 You can leave the block empty or add any extra code you want to be appended to the rendered
 block.
