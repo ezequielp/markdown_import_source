@@ -46,9 +46,7 @@ the extension won't do anything:
 
 ````
 ```clojure
-
 (def my-value 10)
-
 ```
 ````
 
