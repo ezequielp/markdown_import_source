@@ -16,7 +16,17 @@ def extract_attrs(line):
     match = BLOCKS['start'].match(line)
     language = match.group('lang')
     attr_string = match.group('attrs')
-    return dict(lang=language, **dict(re.compile('([^=\s]+)=([^=\s]+)').findall(attr_string)))
+    tokens = filter(None, attr_string.split(' '))
+    flags = []
+    kwattrs = [('lang', language)]
+    for token in tokens:
+        if '=' in token:
+            kwattrs.append(token.split('='))
+        else:
+            flags.append(token)
+
+    # This will convert flag arguments (e.g live) into kwattrs (e.g. live=live)
+    return dict(**dict(zip(flags, flags)), **dict(kwattrs))
 
 
 class ImportSourcePreprocessor(Preprocessor):
@@ -42,10 +52,11 @@ class ImportSourcePreprocessor(Preprocessor):
         languages = set()
         for start, end in blocks[::-1]:
             block_attrs = extract_attrs(lines[start])
-            if 'lang' in block_attrs:
+            will_execute_block = 'live' in block_attrs and self.enable_live_code
+            if 'lang' in block_attrs and will_execute_block:
                 languages.add(block_attrs['lang'])
 
-            new_lines[start] = self.build_start_block(block_attrs, self.enable_live_code)
+            new_lines[start] = self.build_start_block(block_attrs, will_execute_block)
 
             end_offset = 0
             source = self.fetch_source(block_attrs)
@@ -61,7 +72,7 @@ class ImportSourcePreprocessor(Preprocessor):
 
         return new_lines
 
-    def build_start_block(self, attrs, use_klipse):
+    def build_start_block(self, attrs, live_block):
         def new_class(name):
             return 'class={}'.format(name)
 
@@ -82,13 +93,13 @@ class ImportSourcePreprocessor(Preprocessor):
             else:
                 raise Exception("Unrecognized 'hide' value {}".format(hide))
 
-        if use_klipse:
+        if live_block:
             return '<{}><{}>'.format(' '.join(pre_block), ' '.join(code_block))
         else:
             return '```{}'.format(attrs.get('lang', ''))
 
-    def build_end_block(self, use_klipse):
-        return "</code></pre>" if use_klipse else '```'
+    def build_end_block(self, live_block):
+        return "</code></pre>" if live_block else '```'
 
     def fetch_source(self, block_attrs):
         if 'source' in block_attrs:

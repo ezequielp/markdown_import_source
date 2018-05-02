@@ -80,10 +80,27 @@ block.
 
 ## Using live code
 
-You can set `enable_live_code` to `True` on your config file. That will make all the code
-you insert run on the client side. To achieve this, this extension uses the 
+You can set `enable_live_code` to `True` on your config file. That will allow you to make code live
+so that it runs on the client side. To achieve this, this extension uses the 
 [Klipse](https://github.com/viebel/klipse) plugin, which supports clojure, ruby, javascript,
 python, scheme, es2017, jsx, brainfuck, c++, reagent, lua, ocaml and reasonml.
+
+Even with `enable_live_code` set to `True`, you'll still need to activate code on a per block
+basis:
+
+````
+```python live
+# This code will execute
+print(1+2)
+```
+````
+
+````
+```python
+#This code will remain unexecuted
+print(2+2)
+```
+````
 
 In addition to the `source` param, when using live code you can also use the `hide` param
 to either hide the complete block (`all`) or only hide the result block (`results`). Using `all`
