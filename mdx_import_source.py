@@ -74,14 +74,14 @@ class ImportSourcePreprocessor(Preprocessor):
 
     def build_start_block(self, attrs, live_block):
         def new_class(name):
-            return 'class={}'.format(name)
+            return 'class="{}"'.format(name)
 
         pre_block = ['pre']
         code_block = ['code']
 
         # `lang` attr sets the language of the block
         if 'lang' in attrs:
-            code_block.append(new_class('lang-eval-{}'.format(attrs.get('lang'))))
+            code_block.append(new_class('language-eval-{}'.format(attrs.get('lang'))))
 
         # `hide` attr can be set to hide `all` the block or just the `results`
         hide = attrs.get('hide')

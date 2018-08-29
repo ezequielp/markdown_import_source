@@ -13,11 +13,11 @@ KLIPSE_INCLUDE = """<!-- Klipse includes -->
 
 def klipse_include(languages):
     klipse_settings = {}
-    selectors = ['language-klipse']
     for language in languages:
-        selector = '.lang-eval-{}'.format(language)
-        selectors.append(selector)
-        klipse_settings['selector_eval_{}'.format(language)] = selector
+        selector = '.language-eval-{}'.format(language)
+        if language == 'clojure':
+            klipse_settings['selector'] = '.language-klipse, {}'.format(selector)
+        else:
+            klipse_settings['selector_eval_{}'.format(language if language != 'python' else 'python_client')] = selector
 
-    klipse_settings['selector'] = ', '.join(selectors)
     return KLIPSE_INCLUDE.format(klipse_settings=json.dumps(klipse_settings)).split("\n")
